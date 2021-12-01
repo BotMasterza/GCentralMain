@@ -16,6 +16,7 @@ import { EffectComposerWithSchema } from '../../renderer/WebGLRendererSystem'
 import { OrthographicCamera } from 'three'
 import { World } from '../classes/World'
 import { UserId } from '@xrengine/common/src/interfaces/UserId'
+import { EngineActions } from '../../events/EngineActions'
 
 /**
  * This is the base class which holds all the data related to the scene, camera,system etc.
@@ -107,7 +108,7 @@ export class Engine {
 export const awaitEngineLoaded = (): Promise<void> => {
   return new Promise<void>((resolve) => {
     if (Engine.isInitialized) resolve()
-    EngineEvents.instance.addEventListener(EngineEvents.EVENTS.INITIALIZED_ENGINE, resolve)
+    EngineActions.initializedEngine.callbackFunctions.add(resolve)
   })
 }
 

@@ -21,7 +21,9 @@ import { Action } from '@xrengine/engine/src/networking/interfaces/Action'
 import { Engine } from '@xrengine/engine/src/ecs/classes/Engine'
 import { MediaStreamService } from '../media/services/MediaStreamService'
 import { EngineAction } from '../world/services/EngineService'
+import { EngineActions } from '@xrengine/engine/src/events/EngineActions'
 import { useDispatch } from '../store'
+import { dispatchLocal } from '@xrengine/engine/src/networking/functions/dispatchFrom'
 // import { encode, decode } from 'msgpackr'
 
 export class SocketWebRTCClientTransport implements NetworkTransport {
@@ -370,10 +372,7 @@ export class SocketWebRTCClientTransport implements NetworkTransport {
           EngineEvents.instance.dispatchEvent({ type: SocketWebRTCClientTransport.EVENTS.CHANNEL_RECONNECTED })
         this.reconnecting = true
         console.log('reconnect')
-        EngineEvents.instance.dispatchEvent({
-          type: EngineEvents.EVENTS.RESET_ENGINE,
-          instance: (socket as any).instance
-        })
+        dispatchLocal(EngineActions.resetEngine.action({ instance: (socket as any).instance }) as any)
       })
 
       if (instance === true) {

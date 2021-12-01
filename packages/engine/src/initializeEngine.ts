@@ -20,6 +20,8 @@ import { FontManager } from './xrui/classes/FontManager'
 import { createWorld } from './ecs/classes/World'
 import { UserId } from '@xrengine/common/src/interfaces/UserId'
 import { ObjectLayers } from './scene/constants/ObjectLayers'
+import { dispatchLocal } from './networking/functions/dispatchFrom'
+import { EngineActions } from './events/EngineActions'
 
 // @ts-ignore
 Quaternion.prototype.toJSON = function () {
@@ -182,6 +184,8 @@ const registerClientSystems = async (options: Required<InitializeOptions>, canva
   registerSystem(SystemUpdateType.PRE_RENDER, import('./interaction/systems/InteractiveSystem'))
   registerSystem(SystemUpdateType.PRE_RENDER, import('./camera/systems/CameraSystem'))
 
+  registerSystem(SystemUpdateType.PRE_RENDER, import('./events/EngineActionSystem'))
+
   // Audio Systems
   registerSystem(SystemUpdateType.PRE_RENDER, import('./audio/systems/AudioSystem'))
   registerSystem(SystemUpdateType.PRE_RENDER, import('./audio/systems/PositionalAudioSystem'))
@@ -343,7 +347,7 @@ export const initializeEngine = async (initOptions: InitializeOptions = {}): Pro
 
   // Mark engine initialized
   Engine.isInitialized = true
-  EngineEvents.instance.dispatchEvent({ type: EngineEvents.EVENTS.INITIALIZED_ENGINE })
+  dispatchLocal(EngineActions.initializedEngine.action({}) as any)
 }
 
 export const shutdownEngine = async () => {

@@ -5,6 +5,7 @@ import { AuthService } from '@xrengine/client-core/src/user/services/AuthService
 import { UserService } from '@xrengine/client-core/src/user/services/UserService'
 import { useUserState } from '@xrengine/client-core/src/user/services/UserService'
 import { EngineEvents } from '@xrengine/engine/src/ecs/classes/EngineEvents'
+import { EngineActions } from '@xrengine/engine/src/events/EngineActions'
 import { InitializeOptions } from '@xrengine/engine/src/initializationOptions'
 import { shutdownEngine } from '@xrengine/engine/src/initializeEngine'
 import querystring from 'querystring'
@@ -38,7 +39,8 @@ export const NetworkInstanceProvisioning = (props: Props) => {
   // 1. Ensure api server connection in and set up reset listener
   useEffect(() => {
     AuthService.doLoginAuto(true)
-    EngineEvents.instance.addEventListener(EngineEvents.EVENTS.RESET_ENGINE, async (ev: any) => {
+
+    EngineActions.resetEngine.callbackFunctions.add(async (ev: any) => {
       if (!ev.instance) return
 
       await shutdownEngine()
