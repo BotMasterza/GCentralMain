@@ -5,6 +5,7 @@
 import { World } from '../ecs/classes/World'
 import { System } from '../ecs/classes/System'
 import { matches } from 'ts-matches'
+import { EngineActions } from './EngineActions'
 
 export default async function EngineActionSystem(world: World): Promise<System> {
   const executeCallbackFunctions = (cbFuncs: Set<any>) => {
@@ -12,18 +13,23 @@ export default async function EngineActionSystem(world: World): Promise<System> 
     cbFuncs.forEach((cbFunc) => cbFunc())
   }
   world.receptors.push((action) => {
+    console.log('The Action is:' + JSON.stringify(action))
     matches(action)
       .when(
-        EditorActions.selectionChanged.action.matchesFromAny,
-        executeCallbackFunctions(EditorActions.selectionChanged.callbackFunctions)
+        EngineActions.resetEngine.action.matchesFromAny,
+        executeCallbackFunctions(EngineActions.resetEngine.callbackFunctions)
       )
       .when(
-        EditorActions.beforeSelectionChanged.action.matchesFromAny,
-        executeCallbackFunctions(EditorActions.beforeSelectionChanged.callbackFunctions)
+        EngineActions.initializedEngine.action.matchesFromAny,
+        executeCallbackFunctions(EngineActions.initializedEngine.callbackFunctions)
       )
       .when(
-        EditorActions.sceneGraphChanged.action.matchesFromAny,
-        executeCallbackFunctions(EditorActions.sceneGraphChanged.callbackFunctions)
+        EngineActions.connectToWorld.action.matchesFromAny,
+        executeCallbackFunctions(EngineActions.connectToWorld.callbackFunctions)
+      )
+      .when(
+        EngineActions.connectToWorldTimeout.action.matchesFromAny,
+        executeCallbackFunctions(EngineActions.connectToWorldTimeout.callbackFunctions)
       )
   })
 
