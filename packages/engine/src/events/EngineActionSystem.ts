@@ -6,40 +6,34 @@ import { World } from '../ecs/classes/World'
 import { System } from '../ecs/classes/System'
 import { matches } from 'ts-matches'
 import { EngineActions } from './EngineActions'
+import { Action } from '../networking/interfaces/Action'
 
 export default async function EngineActionSystem(world: World): Promise<System> {
-  const executeCallbackFunctions = (cbFuncs: Set<any>) => {
-    console.log('The CallbackFunctions is:' + cbFuncs.size)
-    cbFuncs.forEach((cbFunc) => cbFunc())
+  const executeListeners = (cbFuncs: Set<any>, args) => {
+    console.log('The CallbackFunctions is:' + cbFuncs.size + 'From:' + JSON.stringify(args) + typeof args)
+    cbFuncs.forEach((cbFunc) => {
+      cbFunc(args)
+    })
   }
   world.receptors.push((action) => {
-    console.log('The Action is:' + JSON.stringify(action))
     matches(action)
       .when(
         EngineActions.resetEngine.action.matchesFromAny,
-        executeCallbackFunctions(EngineActions.resetEngine.callbackFunctions)
+        executeListeners(EngineActions.resetEngine.listeners, (action as any).args ?? {})
       )
       .when(
         EngineActions.initializedEngine.action.matchesFromAny,
-        executeCallbackFunctions(EngineActions.initializedEngine.callbackFunctions)
+        executeListeners(EngineActions.initializedEngine.listeners, (action as any).args ?? {})
       )
       .when(
         EngineActions.connectToWorld.action.matchesFromAny,
-        executeCallbackFunctions(EngineActions.connectToWorld.callbackFunctions)
+        executeListeners(EngineActions.connectToWorld.listeners, (action as any).args ?? {})
       )
       .when(
         EngineActions.connectToWorldTimeout.action.matchesFromAny,
-        executeCallbackFunctions(EngineActions.connectToWorldTimeout.callbackFunctions)
+        executeListeners(EngineActions.connectToWorldTimeout.listeners, (action as any).args ?? {})
       )
   })
 
-  return () => {
-    console.log('This is Engine Action System')
-    world.receptors.forEach((receptor) => {
-      world.outgoingActions.forEach((action) => {
-        receptor(action)
-        world.outgoingActions.delete(action)
-      })
-    })
-  }
+  return () => {}
 }

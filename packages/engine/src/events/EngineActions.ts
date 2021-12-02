@@ -1,5 +1,19 @@
 import matches from 'ts-matches'
-import { defineActionCreator } from '../networking/interfaces/Action'
+import { Action, defineActionCreator } from '../networking/interfaces/Action'
+
+class ListenerSet extends Set<any> {
+  constructor() {
+    super()
+  }
+
+  emitOnce(listener) {
+    const onEvent = (args) => {
+      this.delete(onEvent)
+      listener(args)
+    }
+    this.add(onEvent)
+  }
+}
 
 export class EngineActions {
   //Initialization
@@ -7,67 +21,73 @@ export class EngineActions {
     action: defineActionCreator(
       {
         type: 'engine.resetEngine',
-        instance: matches.any
+        args: matches.object.defaultTo({})
       },
       { allowDispatchFromAny: true }
     ),
-    callbackFunctions: new Set()
+    listeners: new ListenerSet()
   }
 
   static initializedEngine = {
     action: defineActionCreator(
       {
-        type: 'engine.initializedEngine'
+        type: 'engine.initializedEngine',
+        args: matches.object.defaultTo({})
       },
       { allowDispatchFromAny: true }
     ),
-    callbackFunctions: new Set()
+    listeners: new ListenerSet()
   }
 
   static connectToWorld = {
     action: defineActionCreator(
       {
-        type: 'engine.connectToWorld'
+        type: 'engine.connectToWorld',
+        args: matches.object.defaultTo({})
       },
       { allowDispatchFromAny: true }
     ),
-    callbackFunctions: new Set()
+    listeners: new ListenerSet()
   }
 
   static connectToWorldTimeout = {
     action: defineActionCreator(
       {
-        type: 'engine.connectToWorldTimeout'
+        type: 'engine.connectToWorldTimeout',
+        args: matches.object.defaultTo({})
       },
       { allowDispatchFromAny: true }
     ),
-    callbackFunctions: new Set()
+    listeners: new ListenerSet()
   }
   static joinedWorld = {
     action: defineActionCreator(
       {
-        type: 'engine.joinedWorld'
+        type: 'engine.joinedWorld',
+        args: matches.object.defaultTo({})
       },
       { allowDispatchFromAny: true }
     ),
-    callbackFunctions: new Set()
+    listeners: new ListenerSet()
   }
   static leaveWorld = {
     action: defineActionCreator(
       {
-        type: 'engine.leaveWorld'
+        type: 'engine.leaveWorld',
+        args: matches.object.defaultTo({})
       },
       { allowDispatchFromAny: true }
     ),
-    callbackFunctions: new Set()
+    listeners: new ListenerSet()
   }
   static sceneLoaded = {
     action: defineActionCreator(
       {
-        type: 'engine.sceneLoaded'
+        type: 'engine.sceneLoaded',
+        args: matches.object.defaultTo({})
       },
       { allowDispatchFromAny: true }
     ),
-    callbackFunctions: new Set()
+    listeners: new ListenerSet()
   }
 }

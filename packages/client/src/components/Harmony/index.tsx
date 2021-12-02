@@ -82,6 +82,7 @@ import { useMediaStreamState } from '@xrengine/client-core/src/media/services/Me
 import { TransportService } from '@xrengine/client-core/src/common/services/TransportService'
 import { useTransportStreamState } from '@xrengine/client-core/src/common/services/TransportService'
 import { useChannelConnectionState } from '@xrengine/client-core/src/common/services/ChannelConnectionService'
+import { EngineActions } from '@xrengine/engine/src/events/EngineActions'
 
 const engineRendererCanvasId = 'engine-renderer-canvas'
 
@@ -278,13 +279,11 @@ const Harmony = (props: Props): any => {
     return () => {
       if (EngineEvents.instance != null) {
         setEngineInitialized(false)
-        EngineEvents.instance?.removeEventListener(EngineEvents.EVENTS.CONNECT_TO_WORLD, connectToWorldHandler)
-
-        EngineEvents.instance?.removeEventListener(EngineEvents.EVENTS.CONNECT_TO_WORLD_TIMEOUT, (e: any) => {
+        EngineActions.connectToWorld.listeners.delete(connectToWorldHandler)
+        EngineActions.connectToWorldTimeout.listeners.delete((e: any) => {
           if (e.instance === true) ChannelConnectionService.resetChannelServer()
         })
-
-        EngineEvents.instance?.removeEventListener(EngineEvents.EVENTS.LEAVE_WORLD, () => {
+        EngineActions.leaveWorld.listeners.delete(() => {
           ChannelConnectionService.resetChannelServer()
           if (channelAwaitingProvisionRef.current.id.length === 0) _setActiveAVChannelId('')
         })
@@ -495,13 +494,12 @@ const Harmony = (props: Props): any => {
   }
 
   const createEngineListeners = (): void => {
-    EngineEvents.instance.addEventListener(EngineEvents.EVENTS.CONNECT_TO_WORLD, connectToWorldHandler)
-
-    EngineEvents.instance.addEventListener(EngineEvents.EVENTS.CONNECT_TO_WORLD_TIMEOUT, (e: any) => {
+    EngineActions.connectToWorld.listeners.add(connectToWorldHandler)
+    EngineActions.connectToWorldTimeout.listeners.add((e: any) => {
       if (e.instance === true) ChannelConnectionService.resetChannelServer()
     })
 
-    EngineEvents.instance.addEventListener(EngineEvents.EVENTS.LEAVE_WORLD, () => {
+    EngineActions.leaveWorld.listeners.add(() => {
       ChannelConnectionService.resetChannelServer()
       setLastConnectToWorldId('')
       MediaStreams.instance.channelId = null!

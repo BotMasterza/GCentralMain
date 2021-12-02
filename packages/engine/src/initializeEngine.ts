@@ -347,7 +347,7 @@ export const initializeEngine = async (initOptions: InitializeOptions = {}): Pro
 
   // Mark engine initialized
   Engine.isInitialized = true
-  dispatchLocal(EngineActions.initializedEngine.action({}) as any)
+  dispatchLocal(EngineActions.initializedEngine.action({} as any))
 }
 
 export const shutdownEngine = async () => {

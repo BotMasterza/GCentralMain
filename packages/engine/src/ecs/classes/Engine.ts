@@ -108,7 +108,7 @@ export class Engine {
 export const awaitEngineLoaded = (): Promise<void> => {
   return new Promise<void>((resolve) => {
     if (Engine.isInitialized) resolve()
-    EngineActions.initializedEngine.callbackFunctions.add(resolve)
+    EngineActions.initializedEngine.listeners.add(resolve)
   })
 }
 

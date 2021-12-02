@@ -206,18 +206,21 @@ export class SocketWebRTCClientTransport implements NetworkTransport {
         ])
       } catch (err) {
         console.log(err)
-        EngineEvents.instance.dispatchEvent({
-          type: EngineEvents.EVENTS.CONNECT_TO_WORLD_TIMEOUT,
-          instance: instance === true
-        })
+        dispatchLocal(EngineActions.connectToWorldTimeout.action({ args: { instance: instance === true } }))
+
         return
       }
       const { connectedClients, routerRtpCapabilities } = ConnectToWorldResponse as any
-      EngineEvents.instance.dispatchEvent({
-        type: EngineEvents.EVENTS.CONNECT_TO_WORLD,
-        connectedClients,
-        instance: instance === true
-      })
+
+      dispatchLocal(
+        EngineActions.connectToWorld.action({
+          args: {
+            connectedClients,
+            instance: instance === true
+          }
+        })
+      )
+
       if ((socket as any).instance) {
         const dispatch = useDispatch()
         dispatch(EngineAction.setConnectedWorld(true))
@@ -372,7 +375,7 @@ export class SocketWebRTCClientTransport implements NetworkTransport {
           EngineEvents.instance.dispatchEvent({ type: SocketWebRTCClientTransport.EVENTS.CHANNEL_RECONNECTED })
         this.reconnecting = true
         console.log('reconnect')
-        dispatchLocal(EngineActions.resetEngine.action({ instance: (socket as any).instance }) as any)
+        dispatchLocal(EngineActions.resetEngine.action({ args: { instance: (socket as any).instance } }) as any)
       })
 
       if (instance === true) {

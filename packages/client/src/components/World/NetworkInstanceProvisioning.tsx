@@ -40,7 +40,7 @@ export const NetworkInstanceProvisioning = (props: Props) => {
   useEffect(() => {
     AuthService.doLoginAuto(true)
 
-    EngineActions.resetEngine.callbackFunctions.add(async (ev: any) => {
+    EngineActions.resetEngine.listeners.add(async (ev: any) => {
       if (!ev.instance) return
 
       await shutdownEngine()
