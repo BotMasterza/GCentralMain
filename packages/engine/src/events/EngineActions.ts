@@ -6,7 +6,7 @@ class ListenerSet extends Set<any> {
     super()
   }
 
-  emitOnce(listener) {
+  addOnce(listener) {
     const onEvent = (args) => {
       this.delete(onEvent)
       listener(args)
